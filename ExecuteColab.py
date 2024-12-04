@@ -57,17 +57,17 @@ def load_training_data(audio_folder_path, label_folder_path):
     return train_audios, train_labels
 
 def spectral_subtraction(y, sr, noise_frames=6, alpha=1.0, beta=0.15):
-    # Compute the STFT of the noisy signal
+    # STFT 신호 계산 
     D = librosa.stft(y)
     magnitude, phase = np.abs(D), np.angle(D)
 
-    # Estimate the noise power spectrum
+    # 노이즈 파워 스팩트럼 추정 
     noise_power = np.mean(magnitude[:, :noise_frames], axis=1, keepdims=True)
 
-    # Subtract the noise power spectrum from the noisy power spectrum
+    # 노이즈 파워 스팩트럼 추출
     magnitude_clean = np.maximum(magnitude - alpha * noise_power, beta * noise_power)
 
-    # Reconstruct the clean signal using the original phase
+    # original phase를 사용한 신호 재정립 
     D_clean = magnitude_clean * np.exp(1j * phase)
     y_clean = librosa.istft(D_clean)
 
@@ -107,10 +107,10 @@ def text_to_speech(text, output_file, speed=1.0):
 
     sound_with_changed_speed.export(output_file, format="mp3")
 
-# Load training data
+# 훈련데이터 로드 
 train_audio_files, train_label_files = load_training_data(train_audio_folder, train_label_folder)
 
-# Process each training sample
+# Process 
 for train_audio_file, train_label_file in zip(train_audio_files, train_label_files):
     # Load audio file
     y, sr = librosa.load(train_audio_file, sr=None)
